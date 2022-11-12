@@ -10,8 +10,8 @@ class Apple:
         self.img = None
         self.stdscr = stdscr
         self.size = 7
-        # self.grad = np.array(list("       .'`^,>~+=:;!i|Il(1?[{tfjrxnuvczeoXYUJCQmwqpdbkh#MW&8%B№$@"))
-        self.grad = np.array(list(" .:;xX$@"))
+        self.grad = np.array(list("       ..''``^,,<~+=:;!i|Il(1?[{tfjrxnuvczeomwqpdbkhXYUQ#MW&8B№@"))
+        #self.grad = np.array(list(" .:;xX$@"))
 
     def get_image(self):
         self.img = np.array(ImageGrab.grab(bbox=None))
