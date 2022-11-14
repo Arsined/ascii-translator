@@ -15,7 +15,7 @@ class Apple:
 
     def get_image(self):
         self.img = np.array(ImageGrab.grab(bbox=None))
-        # self.img = a[:, 0:a[0].size//6]
+        # self.img = self.img[:, 0:a[0].size//6]
         self.out()
 
     def out(self):
