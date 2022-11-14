@@ -3,7 +3,6 @@ import numpy as np
 import curses
 from curses import wrapper
 import keyboard
-import os
 
 class Apple:
     def __init__(self, stdscr):
