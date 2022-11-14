@@ -14,9 +14,9 @@ class Apple:
         #self.grad = np.array(list(" .:;xX$@"))
 
     def get_image(self):
-        # img = np.array(ImageGrab.grab(bbox=None))
-        # self.img = img[:, 0:a[0].size//6]
         self.img = np.array(ImageGrab.grab(bbox=None))
+        # self.img = self.img[:, 0:self.img[0].size//6]
+        self.out()
         
         self.out()
 
