@@ -27,7 +27,7 @@ class Apple:
             self.stdscr.refresh()
         except curses.error:
             self.size += 1
-            print("Решау ошибку. Ожидайте... (рекомендованно открывать код через полноэкранную консоль, а не терминал)")
+            print("Решаю ошибку. Ожидайте... (рекомендованно открывать код через полноэкранную консоль, а не терминал)")
 
 
 if __name__ == '__main__':
@@ -35,3 +35,4 @@ if __name__ == '__main__':
     a = wrapper(Apple)
     while True:
         a.get_image()
+        
