@@ -1,8 +1,16 @@
-from PIL import ImageGrab
+import os
+
+import pywintypes
+import win32con
+from PIL import ImageGrab, Image
 import numpy as np
 import curses
 from curses import wrapper
 import keyboard
+import ctypes
+import win32gui
+from ctypes import windll
+import win32ui
 
 class Apple:
     def __init__(self, stdscr):
@@ -14,11 +22,55 @@ class Apple:
         #self.grad = np.array(list(" .:;xX$@"))
 
     def get_image(self):
-        self.img = np.array(ImageGrab.grab(bbox=None))
-        # self.img = self.img[:, 0:self.img[0].size//6]
-        self.out()
+        try:
+            hwnd = win32gui.FindWindow(None, 'Экспресс-панель - Opera')
+            win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
+            # Change the line below depending on whether you want the whole window
+            # or just the client area.
+            # left, top, right, bot = win32gui.GetClientRect(hwnd)
+            left, top, right, bot = win32gui.GetWindowRect(hwnd)
+            w = 2560 #раз
+            h = 1440
+
+            hwndDC = win32gui.GetWindowDC(hwnd)
+            mfcDC = win32ui.CreateDCFromHandle(hwndDC)
+            saveDC = mfcDC.CreateCompatibleDC()
+
+            saveBitMap = win32ui.CreateBitmap()
+            saveBitMap.CreateCompatibleBitmap(mfcDC, w, h)
+
+            saveDC.SelectObject(saveBitMap)
+
+            # Change the line below depending on whether you want the whole window
+            # or just the client area.
+            # result = windll.user32.PrintWindow(hwnd, saveDC.GetSafeHdc(), 1)
+            result = windll.user32.PrintWindow(hwnd, saveDC.GetSafeHdc(), 2) #2
+
+            bmpinfo = saveBitMap.GetInfo()
+            bmpstr = saveBitMap.GetBitmapBits(True)
+
+            im = Image.frombuffer(
+                'RGB',
+                (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
+                bmpstr, 'raw', 'BGRX', 0, 1)
+
+            win32gui.DeleteObject(saveBitMap.GetHandle())
+            saveDC.DeleteDC()
+            mfcDC.DeleteDC()
+            win32gui.ReleaseDC(hwnd, hwndDC)
+            #3
+            self.img = np.array(im)
+            # PrintWindow Succeeded
+            # self.img = self.img[:, 0:self.img[0].size//6]
+            self.out()
+        except pywintypes.error:
+            self.img = np.array(ImageGrab.grab(bbox=None))
+            self.out()
 
     def out(self):
+        if keyboard.is_pressed("esc"):
+            os.system('cls')
+            exit()
         b = np.sum(self.img[::self.size, ::self.size], axis=2)
         try:
             self.stdscr.clear()
@@ -30,9 +82,16 @@ class Apple:
             print("Решаю ошибку. Ожидайте... (рекомендованно открывать код через полноэкранную консоль, а не терминал)")
 
 
+def set_console_size():
+    kernel32 = ctypes.WinDLL('kernel32')
+    user32 = ctypes.WinDLL('user32')
+    SW_MAXIMIZE = 3
+    hWnd = kernel32.GetConsoleWindow()
+    user32.ShowWindow(hWnd, SW_MAXIMIZE)
+
+
 if __name__ == '__main__':
-    keyboard.press('f11')
+    set_console_size()
     a = wrapper(Apple)
     while True:
         a.get_image()
-        
