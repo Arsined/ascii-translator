@@ -23,14 +23,19 @@ class Apple:
 
     def get_image(self):
         try:
-            hwnd = win32gui.FindWindow(None, 'Экспресс-панель - Opera')
+            hwnd = win32gui.FindWindow(None, 'Друзья - Discord')
             win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
-            # Change the line below depending on whether you want the whole window
-            # or just the client area.
-            # left, top, right, bot = win32gui.GetClientRect(hwnd)
-            left, top, right, bot = win32gui.GetWindowRect(hwnd)
-            w = 2560 #раз
-            h = 1440
+            try:  # Windows 8.1 and later
+                ctypes.windll.shcore.SetProcessDpiAwareness(2)
+            except:
+                try:  # Before Windows 8.1
+                    ctypes.windll.user32.SetProcessDPIAware()
+                except:  # Windows 8 or before
+                    pass # fuck you
+
+            user32 = ctypes.windll.user32
+            w = user32.GetSystemMetrics(0)
+            h = user32.GetSystemMetrics(1)
 
             hwndDC = win32gui.GetWindowDC(hwnd)
             mfcDC = win32ui.CreateDCFromHandle(hwndDC)
@@ -41,10 +46,7 @@ class Apple:
 
             saveDC.SelectObject(saveBitMap)
 
-            # Change the line below depending on whether you want the whole window
-            # or just the client area.
-            # result = windll.user32.PrintWindow(hwnd, saveDC.GetSafeHdc(), 1)
-            result = windll.user32.PrintWindow(hwnd, saveDC.GetSafeHdc(), 2) #2
+            windll.user32.PrintWindow(hwnd, saveDC.GetSafeHdc(), 2) #2
 
             bmpinfo = saveBitMap.GetInfo()
             bmpstr = saveBitMap.GetBitmapBits(True)
@@ -58,10 +60,7 @@ class Apple:
             saveDC.DeleteDC()
             mfcDC.DeleteDC()
             win32gui.ReleaseDC(hwnd, hwndDC)
-            #3
             self.img = np.array(im)
-            # PrintWindow Succeeded
-            # self.img = self.img[:, 0:self.img[0].size//6]
             self.out()
         except pywintypes.error:
             self.img = np.array(ImageGrab.grab(bbox=None))
