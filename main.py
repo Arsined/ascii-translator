@@ -1,5 +1,6 @@
 import os
 
+import pyautogui
 import pywintypes
 import win32con
 from PIL import ImageGrab, Image
@@ -23,7 +24,11 @@ class Apple:
 
     def get_image(self):
         try:
-            hwnd = win32gui.FindWindow(None, 'Друзья - Discord')
+            win_name = "discord"
+            for title in pyautogui.getAllTitles():
+                if win_name.lower() in title.lower():
+                    hwnd = win32gui.FindWindow(None, title)
+                    break
             win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
             try:  # Windows 8.1 and later
                 ctypes.windll.shcore.SetProcessDpiAwareness(2)
@@ -62,7 +67,7 @@ class Apple:
             win32gui.ReleaseDC(hwnd, hwndDC)
             self.img = np.array(im)
             self.out()
-        except pywintypes.error:
+        except pywintypes.error and UnboundLocalError:
             self.img = np.array(ImageGrab.grab(bbox=None))
             self.out()
 
