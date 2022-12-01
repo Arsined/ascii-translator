@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ascii-translator_Arsined"
+version = "0.1"
+authors = [{name = "Arsined"}]
+description = "Translator of pixels into symbols"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Arsined/ascii-translator"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["ascii-translator_Arsined*"]
+
+[project.scripts]
+cli-name = "mypkg.mymodule:some_func"
