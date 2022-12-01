@@ -1,101 +1,97 @@
 import os
-
-import pyautogui
-import pywintypes
-import win32con
-from PIL import ImageGrab, Image
-import numpy as np
 import curses
-from curses import wrapper
-import keyboard
 import ctypes
+import time
+
+import numpy as np
+import pyautogui
+from PIL import Image
+import keyboard
+import win32con
 import win32gui
-from ctypes import windll
 import win32ui
 
 class Apple:
-    def __init__(self, stdscr):
-        self.converted_img = None
-        self.img = None
+    def __init__(self, stdscr: curses.window):
         self.stdscr = stdscr
         self.size = 7
+        self.time = time.time()
         self.grad = np.array(list("       ..''``^,,<~+=:;!i|Il(1?[{tfjrxnuvczeomwqpdbkhXYUQ#MW&8B№@"))
-        #self.grad = np.array(list(" .:;xX$@"))
 
-    def get_image(self):
-        try:
-            win_name = "discord"
+    def get_image(self) -> None:
+        self.time = time.time()
+        win_name = "opera"
+        for title in pyautogui.getAllTitles():
+            if win_name.lower() in title.lower():
+                hwnd = win32gui.FindWindow(None, title)
+                break
+        else:
             for title in pyautogui.getAllTitles():
-                if win_name.lower() in title.lower():
+                if len(title)>1:
                     hwnd = win32gui.FindWindow(None, title)
                     break
-            win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
-            try:  # Windows 8.1 and later
-                ctypes.windll.shcore.SetProcessDpiAwareness(2)
-            except:
-                try:  # Before Windows 8.1
-                    ctypes.windll.user32.SetProcessDPIAware()
-                except:  # Windows 8 or before
-                    pass # fuck you
+        win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
 
-            user32 = ctypes.windll.user32
-            w = user32.GetSystemMetrics(0)
-            h = user32.GetSystemMetrics(1)
+        ctypes.windll.shcore.SetProcessDpiAwareness(2)
 
-            hwndDC = win32gui.GetWindowDC(hwnd)
-            mfcDC = win32ui.CreateDCFromHandle(hwndDC)
-            saveDC = mfcDC.CreateCompatibleDC()
+        user32 = ctypes.windll.user32
+        w = user32.GetSystemMetrics(0)
+        h = user32.GetSystemMetrics(1)
 
-            saveBitMap = win32ui.CreateBitmap()
-            saveBitMap.CreateCompatibleBitmap(mfcDC, w, h)
+        hwndDC = win32gui.GetWindowDC(hwnd)
+        mfcDC = win32ui.CreateDCFromHandle(hwndDC)
+        saveDC = mfcDC.CreateCompatibleDC()
 
-            saveDC.SelectObject(saveBitMap)
+        saveBitMap = win32ui.CreateBitmap()
+        saveBitMap.CreateCompatibleBitmap(mfcDC, w, h)
 
-            windll.user32.PrintWindow(hwnd, saveDC.GetSafeHdc(), 2) #2
+        saveDC.SelectObject(saveBitMap)
 
-            bmpinfo = saveBitMap.GetInfo()
-            bmpstr = saveBitMap.GetBitmapBits(True)
+        ctypes.windll.user32.PrintWindow(hwnd, saveDC.GetSafeHdc(), 2)
 
-            im = Image.frombuffer(
-                'RGB',
-                (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
-                bmpstr, 'raw', 'BGRX', 0, 1)
+        bmpinfo = saveBitMap.GetInfo()
+        bmpstr = saveBitMap.GetBitmapBits(True)
+        im = Image.frombuffer(
+            'RGB',
+            (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
+            bmpstr, 'raw', 'BGRX', 0, 1)
 
-            win32gui.DeleteObject(saveBitMap.GetHandle())
-            saveDC.DeleteDC()
-            mfcDC.DeleteDC()
-            win32gui.ReleaseDC(hwnd, hwndDC)
-            self.img = np.array(im)
-            self.out()
-        except pywintypes.error and UnboundLocalError:
-            self.img = np.array(ImageGrab.grab(bbox=None))
-            self.out()
+        win32gui.DeleteObject(saveBitMap.GetHandle())
+        saveDC.DeleteDC()
+        mfcDC.DeleteDC()
+        win32gui.ReleaseDC(hwnd, hwndDC)
+        img = np.array(im)
+        self.out(img)
 
-    def out(self):
+    def out(self, img: np.array) -> None:
         if keyboard.is_pressed("esc"):
             os.system('cls')
             exit()
-        b = np.sum(self.img[::self.size, ::self.size], axis=2)
+        kk = (256 // self.grad.size)
+        k = np.array([0.2126 / kk, 0.7152 / kk, 0.0722 / kk])
+        img = np.multiply(img, k)
+        converted_img = np.sum(img[::self.size, ::self.size], axis=2).astype(int)
         try:
             self.stdscr.clear()
-            for i in b:
-                self.stdscr.addstr("".join(self.grad[i // (768 // self.grad.size)]) + "\n", curses.A_BOLD)
+            for row in converted_img:
+                self.stdscr.addstr("".join(self.grad[row]) + "\n", curses.A_BOLD)
+            self.stdscr.addstr(str(1/(time.time() - self.time)))
             self.stdscr.refresh()
         except curses.error:
             self.size += 1
             print("Решаю ошибку. Ожидайте... (рекомендованно открывать код через полноэкранную консоль, а не терминал)")
 
 
-def set_console_size():
+def set_console_size() -> None:
     kernel32 = ctypes.WinDLL('kernel32')
     user32 = ctypes.WinDLL('user32')
-    SW_MAXIMIZE = 3
     hWnd = kernel32.GetConsoleWindow()
-    user32.ShowWindow(hWnd, SW_MAXIMIZE)
-
-
-if __name__ == '__main__':
+    user32.ShowWindow(hWnd, win32con.SW_MAXIMIZE)
+def main():
     set_console_size()
-    a = wrapper(Apple)
+    a = curses.wrapper(Apple)
     while True:
         a.get_image()
+
+if __name__ == '__main__':
+    main()
