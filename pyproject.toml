@@ -8,10 +8,18 @@ version = "0.1"
 authors = [{name = "Arsined"}]
 description = "Translator of pixels into symbols"
 readme = "README.md"
-requires-python = ">=3.7"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License"
+]
+dependencies = [
+    'windows-curses',
+    'numpy',
+    'pyautogui',
+    'Pillow',
+    'keyboard',
+    'pywin32',
+    'screeninfo'
 ]
 
 [project.urls]
@@ -20,6 +28,3 @@ classifiers = [
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["ascii-translator_Arsined*"]
-
-[project.scripts]
-cli-name = "mypkg.mymodule:some_func"
