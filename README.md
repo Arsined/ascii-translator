@@ -10,4 +10,4 @@ If you want to run via PyCharm, you should enable terminal emulation. It's not a
 ![image](https://github.com/Arsined/ascii-translator/assets/102512399/227b9749-141d-4c8b-98e8-af49fcf31c11)
 ____
 # Example
-<video src='https://www.youtube.com/watch?v=6y7Sf72axpU)https://www.youtube.com/watch?v=6y7Sf72axpU' width=180></video>
+[![Watch the video](https://img.youtube.com/vi/6y7Sf72axpU/maxresdefault.jpg)](https://www.youtube.com/watch?v=6y7Sf72axpU)
