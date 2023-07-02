@@ -1,4 +1,5 @@
 import os
+import sys
 import curses
 import ctypes
 import time
@@ -54,7 +55,7 @@ class Apple:
             self.size += 1  # very stupid solution
 
 
-def set_console_size() -> None:
+def set_console_size() -> str:
     user32 = ctypes.windll.user32
     hwnd = ctypes.windll.kernel32.GetConsoleWindow()
     user32.ShowWindow(hwnd, 3)
@@ -67,6 +68,7 @@ def set_console_size() -> None:
     user32.ShowWindow(hwnd, 1)
     # leave small indent at the bottom
     user32.SetWindowPos(hwnd, 0, x, y, w, h-2, 0)
+    return hwnd
 
 
 def window_size(hwnd: int) -> tuple[int, int]:
@@ -85,11 +87,12 @@ def window_size(hwnd: int) -> tuple[int, int]:
     return w, h
 
 
-def get_window(win_name: str) -> tuple[int, 'PyCBitmap', 'PyCDC']:
+def get_window(win_name, console_hwnd: str) -> tuple[int, 'PyCBitmap', 'PyCDC']:
     hwnd = 0
     user32 = ctypes.windll.user32
+    print(pyautogui.getAllTitles())
     for title in pyautogui.getAllTitles():  # to get win by not exact title
-        if win_name.lower() in title.lower():
+        if win_name.lower() in title.lower() and console_hwnd != win32gui.FindWindow(None, title):
             hwnd = win32gui.FindWindow(None, title)
             break
     else:
@@ -110,8 +113,9 @@ def get_window(win_name: str) -> tuple[int, 'PyCBitmap', 'PyCDC']:
 
 
 def main():
-    set_console_size()
-    a = curses.wrapper(Apple, get_window("opera"))
+    win_name = sys.argv[1] if len(sys.argv) > 1 else "chrome"
+    console_hwnd = set_console_size()
+    a = curses.wrapper(Apple, get_window(win_name, console_hwnd))
     while True:
         a.get_image()
 
