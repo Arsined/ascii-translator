@@ -9,6 +9,8 @@ It is best to run using cmd. You can pass part of the window title to the argume
 If you want to run via PyCharm, you should enable terminal emulation. It's not a fact that everything will work perfectly.
 ![image](https://github.com/Arsined/ascii-translator/assets/102512399/227b9749-141d-4c8b-98e8-af49fcf31c11)
 I recommend making the console font smaller and more square (8x9 pixels works well)
+![image](https://github.com/Arsined/ascii-translator/assets/102512399/5c688890-58a1-4557-8481-d436bbfb6d1a)
+
 ____
 # Example
 https://www.youtube.com/watch?v=6y7Sf72axpU
