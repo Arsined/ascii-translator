@@ -56,22 +56,19 @@ class Apple:
 
 
 def set_console_size() -> str:
-    try:
-        user32 = ctypes.windll.user32
-        hwnd = ctypes.windll.kernel32.GetConsoleWindow()
-        user32.ShowWindow(hwnd, 3)
-        # I can't just full screen console, video translation won't work
-        rect = win32gui.GetWindowRect(hwnd)
-        x = rect[0]
-        y = rect[1]
-        w = rect[2] - x
-        h = rect[3] - y
-        user32.ShowWindow(hwnd, 1)
-        # leave small indent at the bottom
-        user32.SetWindowPos(hwnd, 0, x, y, w, h-2, 0)
-        return hwnd
-    finally:
-        return "-1"  # I'm to lazy. For situations when the launch is not via the console
+    user32 = ctypes.windll.user32
+    hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+    user32.ShowWindow(hwnd, 3)
+    # I can't just full screen console, video translation won't work
+    rect = win32gui.GetWindowRect(hwnd)
+    x = rect[0]
+    y = rect[1]
+    w = rect[2] - x
+    h = rect[3] - y
+    user32.ShowWindow(hwnd, 1)
+    # leave small indent at the bottom
+    user32.SetWindowPos(hwnd, 0, x, y, w, h-2, 0)
+    return hwnd
 
 
 def window_size(hwnd: int) -> tuple[int, int]:
