@@ -1,1 +1,17 @@
-Can translate to ascii lol
+# Description
+#### Works only for windows
+Translates what is happening in the selected window into ascii code <br />
+The average output "fps" is 20-30 depending on the screen size and the number of illuminated pixels. <br />
+The code takes into account the fact that not all colors are equally bright. <br />
+____
+# Running
+It is best to run using cmd. You can pass part of the window title to the arguments, just "google" or "youtube" will be enough. Or you can enter the title in the code. <br />
+If you want to run via PyCharm, you should enable terminal emulation. It's not a fact that everything will work perfectly.
+![image](https://github.com/Arsined/ascii-translator/assets/102512399/227b9749-141d-4c8b-98e8-af49fcf31c11)
+I recommend making the console font smaller and more square (8x9 pixels works well)
+![image](https://github.com/Arsined/ascii-translator/assets/102512399/5c688890-58a1-4557-8481-d436bbfb6d1a)
+
+____
+# Example
+https://www.youtube.com/watch?v=6y7Sf72axpU
+[![Watch the video](https://img.youtube.com/vi/6y7Sf72axpU/maxresdefault.jpg)](https://www.youtube.com/watch?v=6y7Sf72axpU)
